@@ -13,45 +13,175 @@ datasource db {
 }
 
 model User {
-  id        String      @id @default(uuid())
-  email     String   @unique
-  name      String? @db.VarChar(255)
-  createdAt DateTime @default(now())
-  password  String @db.VarChar(8)
-  createAt DateTime @default(now())
+  id         String     @id @default(uuid())
+  email      String     @unique
+  name       String?    @db.VarChar(255)
+  telefone   Int
+  tipoPessoa TIPOPESSOA
+  password   String     @db.VarChar(8)
+  createAt   DateTime   @default(now())
 
-  vendedor Vendedor[]
-  tipo_pessoa TIPOPESSOA[]
+  vendedor  Vendedor?
+  carrinho  Carrinho?
+  endereco  Endereco[]
+  favoritos Favorite[]
+  pedido    Pedido[]
 }
 
-//Vendedor
 model Vendedor {
-  id String @id @default(uuid())
-  vendedorId String
-  vendedor   User @relation(fields: [vendedorId], references: [id])
-  produto Produto[]
-}
-//Produtos
-model Produto {
-  id        String      @id @default(uuid())
-  nome_produto     String
-  preco Decimal @db.Decimal(10,2)
-  estoque Float
-  vendedorId String
-  vendedor Vendedor @relation(fields: [vendedorId], references: [id])
-  descricao_produto  String? @db.VarChar(255)
+  id           String  @id @default(uuid())
+  userId       String  @unique
+  nome_da_loja String
+  cnpj         String  @unique
+  telefoneLoja Int     @default(11)
+  cep_loja     String?
 
-  favorite Favorite[]
-  typeProduto TYPEPRODUTO[]
+  vendedor User      @relation(fields: [userId], references: [id])
+  produto  Produto[]
+}
+
+model Produto {
+  id           String   @id @default(uuid())
+  vendedorId   String
+  nome         String
+  preco        Decimal  @db.Decimal(10, 2)
+  estoque      Int
+  descricao    String?
+  tags         String[]
+  tempoEntrega DateTime
+
+  vendedor     Vendedor       @relation(fields: [vendedorId], references: [id])
+  favorite     Favorite[]
+  categoria    Categoria[]
+  itemCarrinho ItemCarrinho[]
+  itensPedido  ItemPedido[]
+}
+
+model Endereco {
+  id          String @id @default(uuid())
+  userId      String @unique
+  cep         String
+  rua         String
+  numero      String
+  complemento String
+  bairro      String
+  cidade      String
+  estado      String
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Categoria {
+  id       String    @id @default(uuid())
+  nome     String    @unique
+  produtos Produto[]
+  createAt DateTime  @default(now())
 }
 
 model Favorite {
-  id String @id @default(uuid())
-  comment String
-  createAt String
-  updateAt DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String
   produtoId String
-  product Produto @relation(fields: [produtoId], references: [id])
+  favorito  Boolean  @default(false)
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  produto Produto @relation(fields: [produtoId], references: [id])
+
+  @@unique([userId, produtoId])
+}
+
+model Entrega {
+  id             String        @id @default(uuid())
+  pedidoId       String        @unique
+  status         STATUSENTREGA
+  codigoRastreio String?
+  dataPrevista   DateTime?
+  dataEntregue   DateTime?
+  cep            String
+  rua            String
+  complemento    String
+  bairro         String
+  cidade         String
+  estado         String
+
+  pedido   Pedido   @relation(fields: [pedidoId], references: [id])
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
+
+model Carrinho {
+  id       String         @id @default(uuid())
+  userId   String         @unique
+  user     User           @relation(fields: [userId], references: [id])
+  items    ItemCarrinho[]
+  createAt DateTime       @default(now())
+  updateAt DateTime       @updatedAt
+}
+
+model ItemCarrinho {
+  id         String @id @default(uuid())
+  carrinhoId String
+  produtoId  String
+  quantidade Int
+
+  carrinho Carrinho @relation(fields: [carrinhoId], references: [id])
+  produto  Produto  @relation(fields: [produtoId], references: [id])
+
+  @@unique([produtoId, carrinhoId])
+}
+
+model Pedido {
+  id     String       @id @default(uuid())
+  userId String
+  status STATUSPEDIDO @default(PENDENTE)
+
+  user      User         @relation(fields: [userId], references: [id])
+  items     ItemPedido[]
+  pagamento Pagamento?
+  entrega   Entrega?
+
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
+
+model ItemPedido {
+  id            String  @id @default(uuid())
+  pedidoId      String
+  produtoId     String
+  quantidade    Int
+  precoUnitario Decimal @db.Decimal(10, 2)
+
+  pedido    Pedido      @relation(fields: [pedidoId], references: [id])
+  produto   Produto     @relation(fields: [produtoId], references: [id])
+  devolucao Devolucao[]
+
+  createAt DateTime @default(now())
+}
+
+model Pagamento {
+  id              String          @id @default(uuid())
+  pedidoId        String          @unique
+  status          STATUSPAGAMENTO
+  metodoPagamento METODOPAGAMENTO
+
+  pedido   Pedido   @relation(fields: [pedidoId], references: [id])
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
+
+model Devolucao {
+  id           String          @id @default(uuid())
+  itemPedidoId String
+  quantidade   Int
+  motivo       String
+  status       STATUSDEVOLUCAO
+
+  itemPedido ItemPedido @relation(fields: [itemPedidoId], references: [id])
+
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
 }
 
 enum TIPOPESSOA {
@@ -59,11 +189,42 @@ enum TIPOPESSOA {
   PJ
 }
 
-enum TYPEPRODUTO {
-  VENDIDO
-  COMPRADO
-  CARRINHO
-  REMOVERCARRINHO
-  CANCELARCOMPRA
-  CONFIRMARCOMPRA
+enum METODOPAGAMENTO {
+  PIX
+  CARTAO_CREDITO
+  CARTAO_DEBITO
+}
+
+enum STATUSPAGAMENTO {
+  PEDENTE
+  APROVADO
+  CANCELADO
+  RECUSADO
+  ESTORNADO
+}
+
+enum STATUSPEDIDO {
+  PENDENTE
+  PAGO
+  EM_PREPARACAO
+  ENVIADO
+  ENTREGUE
+  CANCELADO
+}
+
+enum STATUSENTREGA {
+  SOLICITADA
+  EM_ANALISE
+  ENVIADA
+  EM_TRANSITO
+  ENTREGUE
+}
+
+enum STATUSDEVOLUCAO {
+  SOLICITADA
+  EM_ANALISE
+  APROVADA
+  RECUSADA
+  RECEBIDA
+  REEMBOLSADA
 }
