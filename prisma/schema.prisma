@@ -17,8 +17,7 @@ model User {
   email      String     @unique
   name       String?    @db.VarChar(255)
   telefone   Int
-  tipoPessoa TIPOPESSOA
-  password   String     @db.VarChar(8)
+  password   String
   createAt   DateTime   @default(now())
 
   vendedor  Vendedor?
@@ -184,10 +183,6 @@ model Devolucao {
   updateAt DateTime @updatedAt
 }
 
-enum TIPOPESSOA {
-  CPF
-  PJ
-}
 
 enum METODOPAGAMENTO {
   PIX

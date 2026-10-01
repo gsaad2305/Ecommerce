@@ -1,5 +1,4 @@
 import {IsEmail, IsEnum, IsNotEmpty, IsNumber, IsString} from 'class-validator'
-import { TIPOPESSOA } from '../../../generated/prisma/enums.js';
 
 export class CreateUserDto {
   @IsString()
@@ -14,9 +13,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   telefone: number;
 
-  @IsEnum(TIPOPESSOA)
-  type: TIPOPESSOA;
-  
   @IsString()
   @IsNotEmpty()
   password: string;
