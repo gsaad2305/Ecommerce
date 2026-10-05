@@ -12,7 +12,8 @@ export class UserService {
   ) {}
   async create(createUserDto: CreateUserDto) {
     const emailExisted = await this.prismaService.user.findUnique({ where: { email: createUserDto.email} });
-    if (emailExisted) throw new ConflictException('Email existed');
+    if (emailExisted) throw new ConflictException(`Este email já existe
+      Tente novamente`);
     const passwordHash = await this.hashingService.hash(createUserDto.password)
     const newUser = await this.prismaService.user.create({
       data: {

@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto.js';
-import { UpdateAuthDto } from './dto/update-auth.dto.js';
-
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { PrismaService } from '../database/prisma.service.js';
+import { HashingService } from './hashing/hashing.service.js';
+import jwtConfig from './config/jwt.config.js';
+import type { ConfigType } from '@nestjs/config';
+import {JwtService} from '@nestjs/jwt'
+import { LoginDto } from './dto/login.dto.js';
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly hashingService: HashingService,
+    private readonly jwtService: JwtService,
+    @Inject(jwtConfig.KEY)
+    private readonly jwtConfiguration: ConfigType<typeof jwtConfig>
+  ) {}
+  async login(loginDto: LoginDto) {
+    const userValid = await this.prismaService.user.findUnique({
+      where:{
+        email: loginDto.email
+      }
+    });
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+    if (!userValid) throw new UnauthorizedException("Email já existe dentro da plataforma");
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    const compareUsuario = await this.hashingService.compare(
+      loginDto.password,
+      userValid.password,
+    );
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    if(!compareUsuario){
+      throw new UnauthorizedException("Senha inválida!")
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const acessToken = await this.jwtService.signAsync(
+      {
+        sub: userValid.id,
+        email: userValid.email,
+      },
+      {
+        audience: this.jwtConfiguration.audience,
+        issuer: this.jwtConfiguration.issuer,
+        secret: this.jwtConfiguration.secret,
+        expiresIn: this.jwtConfiguration.jwtttl,
+      }
+    );
+
+    return {
+      acessToken,
+    }
   }
 }
