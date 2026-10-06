@@ -4,7 +4,7 @@ import { HashingService } from './hashing/hashing.service.js';
 import jwtConfig from './config/jwt.config.js';
 import type { ConfigType } from '@nestjs/config';
 import {JwtService} from '@nestjs/jwt'
-import { LoginDto } from './dto/login.dto.js';
+import { LoginDto } from './guards/dto/login.dto.js';
 @Injectable()
 export class AuthService {
   constructor(
