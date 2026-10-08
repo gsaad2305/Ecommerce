@@ -17,6 +17,7 @@ describe('ProdutoService', () => {
     tags: ['teste1', 'teste2', 'teste3'],
     tempoEntrega: new Date('2026-10-06T00:00:00.000Z'),
   }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -67,11 +68,17 @@ describe('ProdutoService', () => {
   });
   describe("Criacao de um Produto", () => {
     it("criando um produto", async () => {
-      const newProduto: Produto = {
+      const newProduto= {
         id: '123',
-        ...createprodutoDto
+         vendedorId: 'saw',
+          nome: 'teste k10',
+          preco: new Prisma.Decimal('57.54'),
+          estoque: 2112,
+          descricao: 'Produto de teste',
+          tags: ['teste1', 'teste2', 'teste3'],
+          tempoEntrega: new Date(),
       }
-      vi.spyOn(prismaService.produto, "create").mockResolvedValue(newProduto);
+      vi.spyOn(prismaService.produto, "create").mockResolvedValue(newProduto as any);
 
       const result = await service.create(createprodutoDto);
 

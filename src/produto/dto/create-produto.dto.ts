@@ -4,7 +4,7 @@ import { IsDate, IsDecimal, IsNotEmpty, IsNumber, IsOptional, IsString } from "c
 export class CreateProdutoDto {
   @IsString()
   vendedorId: string;
-  
+
   @IsString()
   @IsNotEmpty()
   nome: string;

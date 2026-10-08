@@ -5,31 +5,37 @@ import { PrismaService } from '../database/prisma.service.js';
 
 @Injectable()
 export class ProdutoService {
-  constructor(
-    private readonly prismaService: PrismaService
-  ){}
-  async create(createprodutoDto: CreateProdutoDto) {
-    const newProduto = await this.prismaService.produto.create({
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async create(createProdutoDto: CreateProdutoDto) {
+    return this.prismaService.produto.create({
       data: {
-        ...createprodutoDto
+        ...createProdutoDto,
+        tempoEntrega: new Date()
       }
     });
-    return newProduto;
   }
 
   async findAll() {
-    return await this.prismaService.produto.findMany()
+    return this.prismaService.produto.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} produto`;
+  async findOne(id: string | number) {
+    return this.prismaService.produto.findUnique({
+      where: { id: String(id) },
+    });
   }
 
-  update(id: number, updateProdutoDto: UpdateProdutoDto) {
-    return `This action updates a #${id} produto`;
+  async update(id: string | number, updateProdutoDto: UpdateProdutoDto) {
+    return this.prismaService.produto.update({
+      where: { id: String(id) },
+      data: updateProdutoDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} produto`;
+  async remove(id: string | number) {
+    return this.prismaService.produto.delete({
+      where: { id: String(id) },
+    });
   }
 }
