@@ -21,7 +21,7 @@ export class AuthService {
       }
     });
 
-    if (!userValid) throw new UnauthorizedException("Email já existe dentro da plataforma");
+    if (!userValid) throw new UnauthorizedException("Crendencias Inválidas");
 
     const compareUsuario = await this.hashingService.compare(
       loginDto.password,
@@ -29,10 +29,19 @@ export class AuthService {
     );
 
     if(!compareUsuario){
-      throw new UnauthorizedException("Senha inválida!")
+      throw new UnauthorizedException("Credenciais inválidas!")
     }
 
-    const acessToken = await this.jwtService.signAsync(
+    const vendedor = await this.prismaService.vendedor.findFirst({
+      where:{
+        userId: userValid.id
+      },
+      select:{
+        id: true
+      }
+    });
+    
+    const accessToken = await this.jwtService.signAsync(
       {
         sub: userValid.id,
         email: userValid.email,
@@ -46,7 +55,8 @@ export class AuthService {
     );
 
     return {
-      acessToken,
+      accessToken,
+      vendedorId: vendedor?.id ??null
     }
   }
 }

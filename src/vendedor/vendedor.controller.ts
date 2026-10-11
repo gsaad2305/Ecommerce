@@ -1,20 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { VendedorService } from './vendedor.service.js';
 import { CreateVendedorDto } from './dto/create-vendedor.dto.js';
 import { UpdateVendedorDto } from './dto/update-vendedor.dto.js';
+import type { AuthenticatedRequest } from '../auth/types/autenticated-request.js';
+import { AuthGuard } from '@nestjs/passport';
 
-@Controller('vendedor')
+@Controller()
 export class VendedorController {
   constructor(private readonly vendedorService: VendedorService) {}
 
-  @Post()
-  create(@Body() createVendedorDto: CreateVendedorDto) {
-    return this.vendedorService.create(createVendedorDto);
+  @UseGuards(AuthGuard('jwt'))
+  @Post("criar-conta-vendedor")
+  criarContaVendedor(@Body() createVendedorDto: CreateVendedorDto, @Req() request: AuthenticatedRequest) {
+    return this.vendedorService.criarContaVendedor(createVendedorDto, request.user.id);
   }
-
-  @Get()
-  findAll() {
-    return this.vendedorService.findAll();
+  @UseGuards(AuthGuard('jwt'))
+  @Get("conta-vendedor")
+  verificarContaVendedor() {
+    return this.vendedorService.verificarContaVendedor();
   }
 
   @Get(':id')

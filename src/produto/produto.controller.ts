@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ProdutoService } from './produto.service.js';
 import { CreateProdutoDto } from './dto/create-produto.dto.js';
 import { UpdateProdutoDto } from './dto/update-produto.dto.js';
+import { AutoTokenGuard } from '../auth/guards/auth.guard.js';
 
 @Controller('produto')
 export class ProdutoController {

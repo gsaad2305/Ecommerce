@@ -1,15 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateVendedorDto } from './dto/create-vendedor.dto.js';
 import { UpdateVendedorDto } from './dto/update-vendedor.dto.js';
+import { PrismaService } from '../database/prisma.service.js';
 
 @Injectable()
 export class VendedorService {
-  create(createVendedorDto: CreateVendedorDto) {
-    return 'This action adds a new vendedor';
+  constructor(
+    private readonly prismaService: PrismaService
+  ){}
+
+  async execptionErros(userId: string){
+      const isUser = await this.prismaService.user.findUnique({
+      where :{
+        id: userId,
+      }
+    });
+
+    if(!isUser) {
+      throw new NotFoundException("Este usuário não existe!\nTente novamente");
+    }
+  }
+  async criarContaVendedor(createVendedorDto: CreateVendedorDto, userId: string) {
+    await this.execptionErros(userId);
+  const vendedorExiste = await this.prismaService.vendedor.findFirst({
+      where: {
+        userId
+      }
+    });
+
+    if(vendedorExiste){
+      throw new ConflictException("Vendedor existe")
+    }
+
+    return await this.prismaService.vendedor.create({
+      data: {
+        userId,
+        nomeLoja: createVendedorDto.nomeLoja,
+        cnpj: createVendedorDto.cnpj,
+        telefoneLoja: createVendedorDto.telefoneLoja,
+        cepLoja: createVendedorDto.cepLoja
+      }
+    });
   }
 
-  findAll() {
-    return `This action returns all vendedor`;
+  async verificarContaVendedor() {
+  return await this.prismaService.vendedor.findMany({
+    select: {
+      id: true,
+      nomeLoja: true,
+      telefoneLoja: true,
+      cepLoja: true
+    }
+  });
   }
 
   findOne(id: number) {
