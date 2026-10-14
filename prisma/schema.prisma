@@ -47,7 +47,6 @@ model Produto {
   estoque      Int
   descricao    String?
   tags         String[]
-  tempoEntrega DateTime
 
   vendedor     Vendedor       @relation(fields: [vendedorId], references: [id])
   favorite     Favorite[]

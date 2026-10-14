@@ -3,6 +3,7 @@ import jwtConfig from "./config/jwt.config.js";
 import type { ConfigType } from "@nestjs/config";
 import {PassportStrategy} from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Role } from "../common/enums/roles.js";
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -21,7 +22,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: {sub: string, email: string}){
     return {
       id:payload.sub,
-      email: payload.email
+      email: payload.email,
+      role: Role.SALLER
     }
   }
   }

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { UserModule } from './user/user.module.js';
 import { HashingModule } from './auth/hashing/hashing.module.js';
 import { AuthModule } from './auth/auth.module.js';
@@ -22,8 +22,9 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     ThrottlerModule.forRoot({
       throttlers:[
       {
-        ttl: 600000,
+        ttl: 10000,
         limit: 15,
+        blockDuration: 60000
       },
       ]
     }),
@@ -37,7 +38,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
   providers: [AppService,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerModule
+      useClass: ThrottlerGuard
     }
   ],
 })

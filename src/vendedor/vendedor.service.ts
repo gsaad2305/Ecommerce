@@ -2,26 +2,18 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { CreateVendedorDto } from './dto/create-vendedor.dto.js';
 import { UpdateVendedorDto } from './dto/update-vendedor.dto.js';
 import { PrismaService } from '../database/prisma.service.js';
+import  { ExceptionErros } from '../common/exeptionErros/erros.js';
 
 @Injectable()
 export class VendedorService {
   constructor(
-    private readonly prismaService: PrismaService
-  ){}
+    private readonly prismaService: PrismaService,
+    private readonly exceptionErros: ExceptionErros
+  ) {}
 
-  async execptionErros(userId: string){
-      const isUser = await this.prismaService.user.findUnique({
-      where :{
-        id: userId,
-      }
-    });
 
-    if(!isUser) {
-      throw new NotFoundException("Este usuário não existe!\nTente novamente");
-    }
-  }
   async criarContaVendedor(createVendedorDto: CreateVendedorDto, userId: string) {
-    await this.execptionErros(userId);
+    await this.exceptionErros.execptionErros(userId);
   const vendedorExiste = await this.prismaService.vendedor.findFirst({
       where: {
         userId
@@ -44,9 +36,15 @@ export class VendedorService {
   }
 
   async verificarContaVendedor() {
+    const produto = await this.prismaService.produto.findFirst({
+      where: {
+
+      }
+    })
   return await this.prismaService.vendedor.findMany({
     select: {
       id: true,
+      userId:true,
       nomeLoja: true,
       telefoneLoja: true,
       cepLoja: true
@@ -54,15 +52,33 @@ export class VendedorService {
   });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} vendedor`;
+  async minhaLoja(userId: string) {
+    return await  this.prismaService.vendedor.findUnique({
+      where: {
+        userId
+      }
+    });
   }
 
-  update(id: number, updateVendedorDto: UpdateVendedorDto) {
-    return `This action updates a #${id} vendedor`;
+  update(userId:string, updateVendedorDto: UpdateVendedorDto) {
+    const updateUser = this.prismaService.vendedor.update({
+      where:{
+        userId
+      },
+      data: {
+        ...updateVendedorDto
+      },
+    });
+
+    return updateUser;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} vendedor`;
+  async deletarContaVendedor(userId: string) {
+    const deleteUser = await this.prismaService.vendedor.delete({
+      where: {
+        userId
+      }
+    });
+    return deleteUser;
   }
 }

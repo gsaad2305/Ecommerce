@@ -1,41 +1,89 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto.js';
 import { UpdateProdutoDto } from './dto/update-produto.dto.js';
 import { PrismaService } from '../database/prisma.service.js';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class ProdutoService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createProdutoDto: CreateProdutoDto) {
-    return this.prismaService.produto.create({
-      data: {
-        ...createProdutoDto,
-        tempoEntrega: new Date()
+  async criarProduto(createProdutoDto: CreateProdutoDto, userId: string) {
+    const vendedor = await this.prismaService.vendedor.findUnique({
+      where: {
+        userId: userId,
+      },
+      select: {
+        id: true
       }
     });
+
+    if(!vendedor) {
+      throw new ForbiddenException("Erro ao criar o produto, você não é um vendedor");
+    }
+
+    const createProduto = await this.prismaService.produto.create({
+      data: {
+        vendedorId: vendedor.id,
+        ...createProdutoDto,
+      }
+    });
+
+    return {
+      createProduto,
+    }
   }
 
-  async findAll() {
-    return this.prismaService.produto.findMany();
+  async todosProdutos() {
+    const allProdutos = await this.prismaService.produto.findMany();
+    if(!allProdutos){
+      throw new NotFoundException("Nenhum produto ainda registrado")
+    }
+
+    return allProdutos;
   }
 
-  async findOne(id: string | number) {
+  async encontrarProduto(id: string) {
     return this.prismaService.produto.findUnique({
-      where: { id: String(id) },
+      where: { id },
     });
   }
 
-  async update(id: string | number, updateProdutoDto: UpdateProdutoDto) {
-    return this.prismaService.produto.update({
-      where: { id: String(id) },
-      data: updateProdutoDto,
+  async atualizarProduto(id: string, updateProdutoDto: UpdateProdutoDto, userId:string){
+      const vendedor = this.prismaService.vendedor.findUnique({
+      where: {
+        userId: userId,
+      },
+      select: {
+        id: true
+      }
     });
-  }
+      if(!vendedor) {
+      throw new ForbiddenException("Erro ao criar o produto, você não é um vendedor");
+    }
+    const produtoExist = await this.prismaService.produto.findUnique({
+      where: {id}
+  });
+    if(!produtoExist) {
+      throw new NotFoundException("Este produto não existe, para ser Atualizado")
+    }
 
-  async remove(id: string | number) {
+    return await this.prismaService.produto.update({
+      where:{id: produtoExist.id},
+      data:{
+        ...updateProdutoDto
+      }
+    })
+  }
+  async deletarProduto(id: string) {
+     const produtoExist = await this.prismaService.produto.findUnique({
+      where: {id}
+  });
+    if(!produtoExist) {
+      throw new NotFoundError("Este produto não existe, para ser Atualizado")
+    }
     return this.prismaService.produto.delete({
-      where: { id: String(id) },
+      where: {id: produtoExist.id}
     });
   }
 }
