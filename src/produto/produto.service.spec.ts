@@ -9,13 +9,11 @@ describe('ProdutoService', () => {
   let service: ProdutoService;
   let prismaService: PrismaService;
   const createprodutoDto: CreateProdutoDto = {
-     vendedorId: 'saw',
      nome: 'teste k10',
-    preco: new Prisma.Decimal('57.54'),
+    preco: 58.61,
     estoque: 2112,
     descricao: 'Produto de teste',
     tags: ['teste1', 'teste2', 'teste3'],
-    tempoEntrega: new Date('2026-10-06T00:00:00.000Z'),
   }
 
   beforeEach(async () => {
@@ -49,11 +47,10 @@ describe('ProdutoService', () => {
           estoque: 2112,
           descricao: 'Produto de teste',
           tags: ['teste1', 'teste2', 'teste3'],
-          tempoEntrega: new Date('2026-10-06T00:00:00.000Z'),
         },
       ];
      vi.spyOn(prismaService.produto, 'findMany').mockResolvedValue(newProduto);
-    const result = await service.findAll()
+    const result = await service.todosProdutos()
     expect(result).toEqual(newProduto)
     expect(prismaService.produto.findMany).toHaveBeenCalledOnce();
     });
@@ -61,7 +58,7 @@ describe('ProdutoService', () => {
     it('Lançar erro', async () => {
       vi.spyOn(prismaService.produto,"findMany").mockRejectedValue(new Error("Erro"));
 
-      await  expect(service.findAll()).rejects.toThrow(
+      await  expect(service.encontrarProduto('123')).rejects.toThrow(
         "Erro"
       );
     });
@@ -76,11 +73,10 @@ describe('ProdutoService', () => {
           estoque: 2112,
           descricao: 'Produto de teste',
           tags: ['teste1', 'teste2', 'teste3'],
-          tempoEntrega: new Date(),
       }
       vi.spyOn(prismaService.produto, "create").mockResolvedValue(newProduto as any);
 
-      const result = await service.create(createprodutoDto);
+      const result = await service.criarProduto(createprodutoDto, '123');
 
       expect(prismaService.produto.create).toHaveBeenCalledWith({
         data: createprodutoDto,

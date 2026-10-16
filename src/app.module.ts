@@ -11,6 +11,7 @@ import jwtConfig from './auth/config/jwt.config.js';
 import { APP_GUARD } from '@nestjs/core';
 import { ProdutoModule } from './produto/produto.module.js';
 import { VendedorModule } from './vendedor/vendedor.module.js';
+import { CarrinhoModule } from './carrinho/carrinho.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 @Module({
@@ -32,7 +33,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     HashingModule,
     AuthModule,
     ProdutoModule,
-    VendedorModule
+    VendedorModule,
+    CarrinhoModule
   ],
   controllers: [AppController],
   providers: [AppService,

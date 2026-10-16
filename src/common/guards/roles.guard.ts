@@ -18,7 +18,7 @@ export class RolesGuards implements CanActivate {
     );
 
     if (!roles?.length) {
-      return false;
+      return true;
     }
 
     const request = context.switchToHttp().getRequest();

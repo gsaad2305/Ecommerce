@@ -36,17 +36,22 @@ export class ProdutoService {
 
   async todosProdutos() {
     const allProdutos = await this.prismaService.produto.findMany();
-    if(!allProdutos){
-      throw new NotFoundException("Nenhum produto ainda registrado")
+    if (allProdutos.length === 0){
+      throw new NotFoundException("Não há nenhum produto cadastrado")
     }
 
     return allProdutos;
   }
 
   async encontrarProduto(id: string) {
-    return this.prismaService.produto.findUnique({
+    const produto = await this.prismaService.produto.findUnique({
       where: { id },
     });
+
+    if(!produto) {
+      throw new NotFoundException("Este produto não existe, para ser encontrado")
+    }
+    return produto;
   }
 
   async atualizarProduto(id: string, updateProdutoDto: UpdateProdutoDto, userId:string){
@@ -68,19 +73,21 @@ export class ProdutoService {
       throw new NotFoundException("Este produto não existe, para ser Atualizado")
     }
 
-    return await this.prismaService.produto.update({
+    const updateProduto =  await this.prismaService.produto.update({
       where:{id: produtoExist.id},
       data:{
         ...updateProdutoDto
       }
-    })
+    });
+
+    return updateProduto;
   }
   async deletarProduto(id: string) {
      const produtoExist = await this.prismaService.produto.findUnique({
       where: {id}
   });
     if(!produtoExist) {
-      throw new NotFoundError("Este produto não existe, para ser Atualizado")
+      throw new NotFoundException("Este produto não existe, para ser Atualizado")
     }
     return this.prismaService.produto.delete({
       where: {id: produtoExist.id}

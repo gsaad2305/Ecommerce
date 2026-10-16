@@ -5,6 +5,8 @@ import jwtConfig from './config/jwt.config.js';
 import type { ConfigType } from '@nestjs/config';
 import {JwtService} from '@nestjs/jwt'
 import { LoginDto } from './guards/dto/login.dto.js';
+import { Role } from '../common/enums/roles.js';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -40,11 +42,12 @@ export class AuthService {
         id: true
       }
     });
-    
+
     const accessToken = await this.jwtService.signAsync(
       {
         sub: userValid.id,
         email: userValid.email,
+        role: vendedor ? Role.SALLER : Role.USER,
       },
       {
         audience: this.jwtConfiguration.audience,

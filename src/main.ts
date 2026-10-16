@@ -23,9 +23,7 @@ async function bootstrap() {
     }),
   );
 
-  app.useSecurityHeaders({
-    xFrameOptions: false
-  });
+  app.useSecurityHeaders();
   app.enableCsrfProtection();
 
   await app.listen(process.env.PORT ?? 3004);

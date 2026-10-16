@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import jwtConfig from "./config/jwt.config.js";
 import type { ConfigType } from "@nestjs/config";
 import {PassportStrategy} from '@nestjs/passport';
@@ -19,11 +19,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       audience: jwtConfiguration.audience
     });
   }
-  async validate(payload: {sub: string, email: string}){
+  async validate(payload: {sub: string, email: string, role: Role}){
+    if (!Object.values(Role).includes(payload.role)) {
+      throw new UnauthorizedException('Token sem papel válido; faça login novamente');
+    }
+
     return {
       id:payload.sub,
       email: payload.email,
-      role: Role.SALLER
+      role: payload.role
     }
   }
   }

@@ -1,4 +1,3 @@
-
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { VendedorService } from './vendedor.service.js';
 import { CreateVendedorDto } from './dto/create-vendedor.dto.js';
@@ -19,7 +18,8 @@ export class VendedorController {
     return this.vendedorService.criarContaVendedor(createVendedorDto, request.user.id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuards)
+  @Roles(Role.SALLER)
   @Get("lojas")
   verificarLojas() {
     return this.vendedorService.verificarContaVendedor();

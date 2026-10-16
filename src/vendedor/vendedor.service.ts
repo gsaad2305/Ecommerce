@@ -36,20 +36,34 @@ export class VendedorService {
   }
 
   async verificarContaVendedor() {
-    const produto = await this.prismaService.produto.findFirst({
-      where: {
-
-      }
-    })
-  return await this.prismaService.vendedor.findMany({
+  const lojas =  await this.prismaService.vendedor.findMany({
     select: {
-      id: true,
-      userId:true,
+      vendedor:{
+        select:{
+          name: true
+        }
+      },
       nomeLoja: true,
       telefoneLoja: true,
-      cepLoja: true
+      cepLoja: true,
+      produto: {
+        select:{
+          nome:true,
+          preco:true,
+          estoque:true,
+          descricao: true,
+          tags:true
+        }
+      }
     }
   });
+  if(lojas.length === 0 ){
+    throw new NotFoundException("Nenhuma loja cadastrada")
+  }
+
+  return {
+    lojas,
+  }
   }
 
   async minhaLoja(userId: string) {

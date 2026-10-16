@@ -1,0 +1,11 @@
+{
+  "github.copilot.chat.gemini35FlashReducedToolUsePrompt.enabled": false,
+  "chat.experimentalModePermissionsPicker": false,
+  "terminal.integrated.tabs.allowAgentCliTitle": false,
+  "chat.implicitContext.includeActiveEditor": false,
+  "chat.mcp.discovery.enabled": {
+    "copilot": false
+  },
+  "chat.extensionUnification.enabled": false,
+  "chat.agent.sandbox.credentials.authenticategit": false
+}
