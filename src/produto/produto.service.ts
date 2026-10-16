@@ -39,7 +39,6 @@ export class ProdutoService {
     };
   }
 
-  // Alias para compatibilidade
   async criarProduto(createProdutoDto: CreateProdutoDto, userId: string) {
     return this.create(createProdutoDto, userId);
   }
@@ -53,7 +52,6 @@ export class ProdutoService {
     return allProdutos;
   }
 
-  // Alias para compatibilidade
   async todosProdutos() {
     return this.findAll();
   }
@@ -71,7 +69,6 @@ export class ProdutoService {
     return produto;
   }
 
-  // Alias para compatibilidade
   async encontrarProduto(id: string) {
     return this.findById(id);
   }
@@ -114,7 +111,6 @@ export class ProdutoService {
     return updateProduto;
   }
 
-  // Alias para compatibilidade
   async atualizarProduto(
     id: string,
     updateProdutoDto: UpdateProdutoDto,
@@ -137,7 +133,6 @@ export class ProdutoService {
     });
   }
 
-  // Alias para compatibilidade
   async deletarProduto(id: string) {
     return this.remove(id);
   }

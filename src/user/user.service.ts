@@ -46,7 +46,6 @@ export class UserService {
     return newEndereco;
   }
 
-  // Alias para compatibilidade
   async createEndereco(createEnderecoDto: CreateEnderecoDto, userId: string) {
     return this.createAddress(createEnderecoDto, userId);
   }
@@ -75,7 +74,6 @@ export class UserService {
     return myAccount;
   }
 
-  // Alias para compatibilidade
   async findAll(userId: string) {
     return this.findByUserId(userId);
   }
@@ -87,7 +85,6 @@ export class UserService {
     });
   }
 
-  // Alias para compatibilidade
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
     return this.update(id, updateUserDto);
   }
@@ -98,7 +95,6 @@ export class UserService {
     });
   }
 
-  // Alias para compatibilidade
   async deleteUser(id: string) {
     return this.remove(id);
   }

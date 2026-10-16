@@ -149,7 +149,7 @@ describe('PagamentoService', () => {
       prismaService.produto.findUnique.mockResolvedValue({
         id: 'prod-1',
         nome: 'Camiseta',
-        estoque: 1, // menor que a quantidade 2
+        estoque: 1,
       });
 
       await expect(

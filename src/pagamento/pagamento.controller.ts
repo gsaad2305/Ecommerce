@@ -22,9 +22,6 @@ import type { AuthenticatedRequest } from '../auth/types/autenticated-request.js
 export class PagamentoController {
   constructor(private readonly pagamentoService: PagamentoService) {}
 
-  /**
-   * Finaliza a compra do carrinho atual (Checkout e Pagamento integrados)
-   */
   @Post('checkout')
   checkout(
     @Req() request: AuthenticatedRequest,
@@ -33,9 +30,6 @@ export class PagamentoController {
     return this.pagamentoService.checkout(request.user.id, processPaymentDto);
   }
 
-  /**
-   * Processa pagamento de um pedido pendente já criado
-   */
   @Post('processar')
   processPayment(
     @Req() request: AuthenticatedRequest,
@@ -47,17 +41,11 @@ export class PagamentoController {
     );
   }
 
-  /**
-   * Lista todos os pagamentos do usuário logado
-   */
   @Get()
   findAll(@Req() request: AuthenticatedRequest) {
     return this.pagamentoService.findAll(request.user.id);
   }
 
-  /**
-   * Busca um pagamento por ID
-   */
   @Get(':id')
   findById(@Param('id') id: string, @Req() request: AuthenticatedRequest) {
     return this.pagamentoService.findById(id, request.user.id);

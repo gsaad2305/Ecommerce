@@ -17,16 +17,6 @@ import {
 export class PagamentoService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  /**
-   * Processa o checkout completo a partir do carrinho do usuário autenticado.
-   * Executa em transação atômica:
-   * 1. Valida existência e itens do carrinho
-   * 2. Valida e debita o estoque de cada produto
-   * 3. Cria o Pedido e ItemPedido associados
-   * 4. Gera o Pagamento aprovado
-   * 5. Cria a Entrega associada ao endereço do usuário
-   * 6. Limpa o carrinho
-   */
   async checkout(userId: string, processPaymentDto: ProcessPaymentDto) {
     const user = await this.prismaService.user.findUnique({
       where: { id: userId },
@@ -60,7 +50,6 @@ export class PagamentoService {
 
     const enderecoEntrega = user.endereco[0];
 
-    // Simulação do gateway de pagamento
     const gatewayResult = this.simulateGatewayCharge(processPaymentDto);
     if (!gatewayResult.success) {
       throw new BadRequestException(
@@ -69,7 +58,6 @@ export class PagamentoService {
     }
 
     return this.prismaService.$transaction(async (tx) => {
-      // 1. Validar e deduzir o estoque de cada produto
       for (const item of user.carrinho!.items) {
         const produtoAtual = await tx.produto.findUnique({
           where: { id: item.produtoId },
@@ -97,7 +85,6 @@ export class PagamentoService {
         });
       }
 
-      // 2. Criar Pedido com os itens
       const pedido = await tx.pedido.create({
         data: {
           userId,
@@ -119,7 +106,6 @@ export class PagamentoService {
         },
       });
 
-      // 3. Registrar o Pagamento como APROVADO
       const pagamento = await tx.pagamento.create({
         data: {
           pedidoId: pedido.id,
@@ -128,7 +114,6 @@ export class PagamentoService {
         },
       });
 
-      // 4. Criar registro de Entrega com base no endereço cadastrado
       const entrega = await tx.entrega.create({
         data: {
           pedidoId: pedido.id,
@@ -143,7 +128,6 @@ export class PagamentoService {
         },
       });
 
-      // 5. Limpar os itens do carrinho após a compra concluída
       await tx.itemCarrinho.deleteMany({
         where: { carrinhoId: user.carrinho!.id },
       });
@@ -168,9 +152,6 @@ export class PagamentoService {
     });
   }
 
-  /**
-   * Processa pagamento de um pedido já existente pendente de pagamento
-   */
   async processExistingOrderPayment(
     userId: string,
     createPagamentoDto: CreatePagamentoDto,
@@ -206,7 +187,6 @@ export class PagamentoService {
     }
 
     return this.prismaService.$transaction(async (tx) => {
-      // Deduzir o estoque caso o pedido ainda não tenha abatido
       for (const item of pedido.items) {
         const produto = await tx.produto.findUnique({
           where: { id: item.produtoId },

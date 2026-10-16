@@ -38,7 +38,6 @@ export class VendedorService {
     });
   }
 
-  // Alias para compatibilidade
   async criarContaVendedor(
     createVendedorDto: CreateVendedorDto,
     userId: string,
@@ -78,7 +77,6 @@ export class VendedorService {
     };
   }
 
-  // Alias para compatibilidade
   async verificarContaVendedor() {
     return this.findAll();
   }
@@ -91,7 +89,6 @@ export class VendedorService {
     });
   }
 
-  // Alias para compatibilidade
   async minhaLoja(userId: string) {
     return this.findByUserId(userId);
   }
@@ -115,7 +112,6 @@ export class VendedorService {
     });
   }
 
-  // Alias para compatibilidade
   async deletarContaVendedor(userId: string) {
     return this.remove(userId);
   }

@@ -51,7 +51,6 @@ export class CarrinhoService {
     return this.getOrCreateCart(userId);
   }
 
-  // Alias mantido para compatibilidade
   async getCarrinhoUsuario(userId: string) {
     return this.findByUserId(userId);
   }
@@ -102,7 +101,6 @@ export class CarrinhoService {
     return this.findByUserId(userId);
   }
 
-  // Alias mantido para compatibilidade
   async adicionarItem(userId: string, addItemDto: AddItemCarrinhoDto) {
     return this.addItem(userId, addItemDto);
   }
@@ -137,7 +135,6 @@ export class CarrinhoService {
     return this.findByUserId(userId);
   }
 
-  // Alias mantido para compatibilidade
   async atualizarQuantidadeItem(
     userId: string,
     itemId: string,
@@ -164,7 +161,6 @@ export class CarrinhoService {
     return this.findByUserId(userId);
   }
 
-  // Alias mantido para compatibilidade
   async removerItem(userId: string, itemId: string) {
     return this.removeItem(userId, itemId);
   }
@@ -179,7 +175,6 @@ export class CarrinhoService {
     return this.findByUserId(userId);
   }
 
-  // Alias mantido para compatibilidade
   async limparCarrinho(userId: string) {
     return this.clearCart(userId);
   }
