@@ -12,6 +12,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ProdutoModule } from './produto/produto.module.js';
 import { VendedorModule } from './vendedor/vendedor.module.js';
 import { CarrinhoModule } from './carrinho/carrinho.module.js';
+import { PagamentoModule } from './pagamento/pagamento.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 @Module({
@@ -34,7 +35,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     AuthModule,
     ProdutoModule,
     VendedorModule,
-    CarrinhoModule
+    CarrinhoModule,
+    PagamentoModule
   ],
   controllers: [AppController],
   providers: [AppService,

@@ -1,15 +1,13 @@
-import { Decimal } from "@prisma/client/runtime/index-browser";
-import {  IsArray, IsDecimal, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateProdutoDto {
-
   @IsString()
   @IsNotEmpty()
   nome: string;
 
   @IsString()
   @IsOptional()
-  descricao: string;
+  descricao?: string;
 
   @IsNumber()
   @IsNotEmpty()
@@ -19,9 +17,6 @@ export class CreateProdutoDto {
   estoque: number;
 
   @IsArray()
-  @IsString({each: true})
+  @IsString({ each: true })
   tags: string[];
-
-
-
 }

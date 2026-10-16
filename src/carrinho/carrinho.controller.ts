@@ -25,25 +25,25 @@ export class CarrinhoController {
   constructor(private readonly carrinhoService: CarrinhoService) {}
 
   @Get()
-  getCarrinho(@Req() request: AuthenticatedRequest) {
-    return this.carrinhoService.getCarrinhoUsuario(request.user.id);
+  getCart(@Req() request: AuthenticatedRequest) {
+    return this.carrinhoService.findByUserId(request.user.id);
   }
 
   @Post('items')
-  adicionarItem(
+  addItem(
     @Req() request: AuthenticatedRequest,
     @Body() addItemDto: AddItemCarrinhoDto,
   ) {
-    return this.carrinhoService.adicionarItem(request.user.id, addItemDto);
+    return this.carrinhoService.addItem(request.user.id, addItemDto);
   }
 
   @Patch('items/:itemId')
-  atualizarQuantidade(
+  updateItemQuantity(
     @Req() request: AuthenticatedRequest,
     @Param('itemId') itemId: string,
     @Body() updateDto: UpdateItemCarrinhoDto,
   ) {
-    return this.carrinhoService.atualizarQuantidadeItem(
+    return this.carrinhoService.updateItemQuantity(
       request.user.id,
       itemId,
       updateDto,
@@ -51,15 +51,15 @@ export class CarrinhoController {
   }
 
   @Delete('items/:itemId')
-  removerItem(
+  removeItem(
     @Req() request: AuthenticatedRequest,
     @Param('itemId') itemId: string,
   ) {
-    return this.carrinhoService.removerItem(request.user.id, itemId);
+    return this.carrinhoService.removeItem(request.user.id, itemId);
   }
 
   @Delete()
-  limparCarrinho(@Req() request: AuthenticatedRequest) {
-    return this.carrinhoService.limparCarrinho(request.user.id);
+  clearCart(@Req() request: AuthenticatedRequest) {
+    return this.carrinhoService.clearCart(request.user.id);
   }
 }

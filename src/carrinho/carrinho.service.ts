@@ -11,7 +11,7 @@ import { UpdateItemCarrinhoDto } from './dto/update-item-carrinho.dto.js';
 export class CarrinhoService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async obterOuCriarCarrinho(userId: string) {
+  async getOrCreateCart(userId: string) {
     const user = await this.prismaService.user.findUnique({
       where: { id: userId },
     });
@@ -47,12 +47,17 @@ export class CarrinhoService {
     return carrinho;
   }
 
-  async getCarrinhoUsuario(userId: string) {
-    return this.obterOuCriarCarrinho(userId);
+  async findByUserId(userId: string) {
+    return this.getOrCreateCart(userId);
   }
 
-  async adicionarItem(userId: string, addItemDto: AddItemCarrinhoDto) {
-    const carrinho = await this.obterOuCriarCarrinho(userId);
+  // Alias mantido para compatibilidade
+  async getCarrinhoUsuario(userId: string) {
+    return this.findByUserId(userId);
+  }
+
+  async addItem(userId: string, addItemDto: AddItemCarrinhoDto) {
+    const carrinho = await this.getOrCreateCart(userId);
 
     const produto = await this.prismaService.produto.findUnique({
       where: { id: addItemDto.produtoId },
@@ -94,15 +99,20 @@ export class CarrinhoService {
       });
     }
 
-    return this.getCarrinhoUsuario(userId);
+    return this.findByUserId(userId);
   }
 
-  async atualizarQuantidadeItem(
+  // Alias mantido para compatibilidade
+  async adicionarItem(userId: string, addItemDto: AddItemCarrinhoDto) {
+    return this.addItem(userId, addItemDto);
+  }
+
+  async updateItemQuantity(
     userId: string,
     itemId: string,
     updateDto: UpdateItemCarrinhoDto,
   ) {
-    const carrinho = await this.obterOuCriarCarrinho(userId);
+    const carrinho = await this.getOrCreateCart(userId);
 
     const item = await this.prismaService.itemCarrinho.findUnique({
       where: { id: itemId },
@@ -124,11 +134,20 @@ export class CarrinhoService {
       data: { quantidade: updateDto.quantidade },
     });
 
-    return this.getCarrinhoUsuario(userId);
+    return this.findByUserId(userId);
   }
 
-  async removerItem(userId: string, itemId: string) {
-    const carrinho = await this.obterOuCriarCarrinho(userId);
+  // Alias mantido para compatibilidade
+  async atualizarQuantidadeItem(
+    userId: string,
+    itemId: string,
+    updateDto: UpdateItemCarrinhoDto,
+  ) {
+    return this.updateItemQuantity(userId, itemId, updateDto);
+  }
+
+  async removeItem(userId: string, itemId: string) {
+    const carrinho = await this.getOrCreateCart(userId);
 
     const item = await this.prismaService.itemCarrinho.findUnique({
       where: { id: itemId },
@@ -142,16 +161,26 @@ export class CarrinhoService {
       where: { id: itemId },
     });
 
-    return this.getCarrinhoUsuario(userId);
+    return this.findByUserId(userId);
   }
 
-  async limparCarrinho(userId: string) {
-    const carrinho = await this.obterOuCriarCarrinho(userId);
+  // Alias mantido para compatibilidade
+  async removerItem(userId: string, itemId: string) {
+    return this.removeItem(userId, itemId);
+  }
+
+  async clearCart(userId: string) {
+    const carrinho = await this.getOrCreateCart(userId);
 
     await this.prismaService.itemCarrinho.deleteMany({
       where: { carrinhoId: carrinho.id },
     });
 
-    return this.getCarrinhoUsuario(userId);
+    return this.findByUserId(userId);
+  }
+
+  // Alias mantido para compatibilidade
+  async limparCarrinho(userId: string) {
+    return this.clearCart(userId);
   }
 }

@@ -1,22 +1,36 @@
 # Diretrizes de Commits
 
-Ao criar mensagens de commit ou sugerir commits para este projeto, utilize a convenção baseada em **[Conventional Commits](https://www.conventionalcommits.org/pt-br)** com a seguinte estrutura e tipos:
+## Gatilho de Commit
+- **Quando commitar**: Sempre ao **finalizar uma tarefa/etapa de desenvolvimento**, se houver arquivos alterados.
+- **Branch alvo**: `macos`.
+- **Ações**:
+  1. `git add .` (adicionar todos os arquivos alterados da tarefa).
+  2. `git commit` seguindo rigorosamente a estrutura e convenção abaixo, baseada nas alterações realizadas.
 
-## Estrutura
-`<tipo>(<escopo opcional>): <descrição>`
+---
+
+## Estrutura do Commit
+```
+<tipo>(<escopo opcional>): <descrição sucinta em português>
+
+- <detalhe da alteração 1>
+- <detalhe da alteração 2>
+```
+
+---
 
 ## Tipos Permitidos
 
-- `feat`: Adição de um **novo recurso** (MINOR semver).
-- `fix`: **Correção de bug** / solução de problema (PATCH semver).
-- `docs`: Mudanças na **documentação** (ex: README, comentários de documentação, sem alteração de código).
-- `test`: Criação, alteração ou exclusão de **testes** (sem alteração de código de produção).
-- `build`: Modificações em **arquivos de build e dependências**.
-- `perf`: Mudanças de código voltadas para **performance**.
-- `style`: Formatações de código, semicolons, trailing spaces, lint (sem alteração de lógica/código funcional).
-- `refactor`: **Refatorações** de código que não alteram a funcionalidade existente.
-- `chore`: Atualizações de tarefas de build, configurações de administrador, gitignore, ferramentas (sem alterar código de produção).
-- `ci`: Mudanças nos arquivos e fluxos de **integração contínua** (CI/CD).
+- `feat`: Adição de um **novo recurso** (se relaciona com MINOR do semver).
+- `fix`: **Correção de bug** / solução de problema (se relaciona com PATCH do semver).
+- `docs`: Mudanças na **documentação** (README, jsdoc, sem alteração de código).
+- `test`: Criação, alteração ou exclusão de **testes** unitários/e2e (sem alterar código de produção).
+- `build`: Modificações em **arquivos de build e dependências** (package.json, pnpm-lock, etc.).
+- `perf`: Mudanças voltadas especificamente para melhoria de **performance**.
+- `style`: Formatação de código, lint, semicolons, trailing spaces (sem alteração de lógica).
+- `refactor`: **Refatoração** que não altera o comportamento funcional.
+- `chore`: Atualizações de tarefas de build, configurações de administrador, gitignore, ferramentas.
+- `ci`: Alterações nos fluxos de **integração contínua** (CI/CD, workflows).
 - `raw`: Mudanças em arquivos de **configurações, dados, features, parâmetros**.
-- `cleanup`: Remoção de **código comentado**, trechos desnecessários e limpeza para melhorar manutenibilidade.
+- `cleanup`: Remoção de **código comentado**, trechos mortos ou limpeza para legibilidade.
 - `remove`: **Exclusão de arquivos**, diretórios ou funcionalidades obsoletas/não utilizadas.
