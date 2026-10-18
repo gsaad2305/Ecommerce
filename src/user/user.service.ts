@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/cliente/update-user.dto.js';
 import { PrismaService } from '../database/prisma.service.js';
 import { HashingService } from '../auth/hashing/hashing.service.js';
 import { CreateEnderecoDto } from './dto/endereco/add-endereco.dto.js';
-
+import {isPhone} from 'validation-br';
 @Injectable()
 export class UserService {
   constructor(
@@ -19,10 +19,15 @@ export class UserService {
     if (emailExisted) {
       throw new ConflictException(`Este email já existe. Tente novamente`);
     }
+    const isTelefone = isPhone(createUserDto.telefone);
+    if(!isTelefone) {
+      throw new ConflictException(`Este Telefone é inválido`);
+    }
     const passwordHash = await this.hashingService.hash(createUserDto.password);
     const newUser = await this.prismaService.user.create({
       data: {
         ...createUserDto,
+
         password: passwordHash,
       },
       select: {
@@ -79,10 +84,20 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return this.prismaService.user.update({
+    const isTelefone = updateUserDto.telefone && isPhone(updateUserDto.telefone);
+    if(!isTelefone) {
+      throw new ConflictException(`Este Telefone é inválido`);
+    }
+    const updateUser = this.prismaService.user.update({
       where: { id },
-      data: updateUserDto,
+      data: {
+        ...updateUserDto,
+      }
     });
+
+    return {
+      updateUser,
+    };
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {

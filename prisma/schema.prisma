@@ -16,7 +16,7 @@ model User {
   id         String     @id @default(uuid())
   email      String     @unique
   name       String?    @db.VarChar(255)
-  telefone   Int
+  telefone   String
   password   String
   createAt   DateTime   @default(now())
 
@@ -32,7 +32,7 @@ model Vendedor {
   userId       String  @unique
   nomeLoja    String
   cnpj         String  @unique
-  telefoneLoja Int     @default(11)
+  telefoneLoja String
   cepLoja     String
 
   vendedor User      @relation(fields: [userId], references: [id])

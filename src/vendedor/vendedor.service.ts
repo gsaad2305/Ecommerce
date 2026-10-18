@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -7,7 +8,7 @@ import { CreateVendedorDto } from './dto/create-vendedor.dto.js';
 import { UpdateVendedorDto } from './dto/update-vendedor.dto.js';
 import { PrismaService } from '../database/prisma.service.js';
 import { ExceptionErros } from '../common/exeptionErros/erros.js';
-
+import { isCEP, isCNPJ, isPhone } from 'validation-br';
 @Injectable()
 export class VendedorService {
   constructor(
@@ -26,7 +27,18 @@ export class VendedorService {
     if (vendedorExiste) {
       throw new ConflictException('Vendedor existe');
     }
-
+    const cnpjValid = isCNPJ(createVendedorDto.cnpj)
+    if (!cnpjValid) {
+      throw new BadRequestException('CNPJ inválido');
+    }
+    const cepValid = isCEP(createVendedorDto.cepLoja)
+    if (!cepValid) {
+      throw new BadRequestException('CEP inválido');
+    }
+    const telefoneValid = isPhone(createVendedorDto.telefoneLoja)
+    if (!telefoneValid) {
+      throw new BadRequestException('Telefone inválido');
+    }
     return this.prismaService.vendedor.create({
       data: {
         userId,
@@ -90,7 +102,13 @@ export class VendedorService {
   }
 
   async minhaLoja(userId: string) {
-    return this.findByUserId(userId);
+    const loja = await this.findByUserId(userId);
+
+    if(!loja) {
+      throw new NotFoundException('Nenhuma loja encontrada');
+    }
+   
+    return loja;
   }
 
   async update(userId: string, updateVendedorDto: UpdateVendedorDto) {

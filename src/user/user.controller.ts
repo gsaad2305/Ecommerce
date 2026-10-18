@@ -38,6 +38,7 @@ export class UserController {
     return this.userService.createAddress(createEnderecoDto, request.user.id);
   }
 
+
   @UseGuards(AuthGuard('jwt'), RolesGuards)
   @Roles(Role.USER)
   @Get()

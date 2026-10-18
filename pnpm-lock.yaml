@@ -44,6 +44,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
+      validation-br:
+        specifier: ^2.0.0
+        version: 2.0.0
     devDependencies:
       '@nestjs/authorization':
         specifier: ^0.1.0
@@ -2644,6 +2647,9 @@ packages:
       typescript:
         optional: true
 
+  validation-br@2.0.0:
+    resolution: {integrity: sha512-5dw6Us6KuTQDKJ0CZs9EtTO+Y9ZLMOLIp7JjuLZ9XMRCLZu0/mkUVzGjUOfJYa5zmxNfW2LD0fCxu1igWxW4ww==}
+
   validator@13.15.35:
     resolution: {integrity: sha512-TQ5pAGhd5whStmqWvYF4OjQROlmv9SMFVt37qoCBdqRffuuklWYQlCNnEs2ZaIBD1kZRNnikiZOS1eqgkar0iw==}
     engines: {node: '>= 0.10'}
@@ -5111,6 +5117,8 @@ snapshots:
   valibot@1.4.2(typescript@6.0.3):
     optionalDependencies:
       typescript: 6.0.3
+
+  validation-br@2.0.0: {}
 
   validator@13.15.35: {}
 

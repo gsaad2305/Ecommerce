@@ -30,8 +30,7 @@ export class VendedorController {
     return this.vendedorService.create(createVendedorDto, request.user.id);
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuards)
-  @Roles(Role.SALLER)
+  @UseGuards(AuthGuard('jwt'))
   @Get('lojas')
   findAll() {
     return this.vendedorService.findAll();
@@ -39,9 +38,15 @@ export class VendedorController {
 
   @UseGuards(AuthGuard('jwt'), RolesGuards)
   @Roles(Role.SALLER)
-  @Get('loja')
+  @Get('minhaLoja')
   findByUserId(@Req() request: AuthenticatedRequest) {
     return this.vendedorService.findByUserId(request.user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('loja')
+  minhaLoja(@Req() request: AuthenticatedRequest) {
+    return this.vendedorService.minhaLoja(request.user.id);
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuards)

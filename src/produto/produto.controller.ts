@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { ProdutoService } from './produto.service.js';
 import { CreateProdutoDto } from './dto/create-produto.dto.js';
@@ -17,6 +18,7 @@ import type { AuthenticatedRequest } from '../auth/types/autenticated-request.js
 import { RolesGuards } from '../common/guards/roles.guard.js';
 import { Roles } from '../common/decorator/roles.decorator.js';
 import { Role } from '../common/enums/roles.js';
+import { addFavorite } from './dto/favorito.dto.js';
 
 @Controller('produto')
 export class ProdutoController {
@@ -32,11 +34,27 @@ export class ProdutoController {
     return this.produtoService.create(createProdutoDto, request.user.id);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
-  findAll() {
-    return this.produtoService.findAll();
+  findAll(@Query("nome") nome?: string) {
+    return this.produtoService.findAll(nome);
   }
 
+  @UseGuards(AuthGuard('jwt'), RolesGuards)
+  @Roles(Role.USER)
+  @Patch('add-favorite')
+  addFavorite(@Body() addFavorite: addFavorite, @Req() request: AuthenticatedRequest) {
+    return this.produtoService.addFavorite(addFavorite, request.user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuards)
+  @Roles(Role.USER)
+  @Get('all-favorites')
+  findAllFavorites(@Req() request: AuthenticatedRequest) {
+    return this.produtoService.findAllFavorites(request.user.id);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findById(@Param('id') id: string) {
     return this.produtoService.findById(id);

@@ -12,7 +12,7 @@ describe('VendedorService', () => {
 
   const createVendedorDto: CreateVendedorDto = {
     nomeLoja: 'teste',
-    telefoneLoja: 9999999,
+    telefoneLoja: '999999999',
     cnpj: '3233131',
     cepLoja: '312312312',
   };

@@ -7,8 +7,8 @@ export class CreateVendedorDto {
   @IsString()
   cnpj: string;
 
-  @IsNumber()
-  telefoneLoja: number;
+  @IsString()
+  telefoneLoja: string;
 
   @IsString()
   cepLoja: string;

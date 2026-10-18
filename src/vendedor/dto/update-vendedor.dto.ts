@@ -6,5 +6,5 @@ export class UpdateVendedorDto extends PartialType(CreateVendedorDto) {
   @IsOptional()
   cepLoja?: string;
   nomeLoja?: string;
-  telefoneLoja?: number;
+  telefoneLoja?: string;
 }

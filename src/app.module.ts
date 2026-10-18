@@ -13,6 +13,7 @@ import { ProdutoModule } from './produto/produto.module.js';
 import { VendedorModule } from './vendedor/vendedor.module.js';
 import { CarrinhoModule } from './carrinho/carrinho.module.js';
 import { PagamentoModule } from './pagamento/pagamento.module.js';
+import { PedidoModule } from './pedido/pedido.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 @Module({
@@ -36,7 +37,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     ProdutoModule,
     VendedorModule,
     CarrinhoModule,
-    PagamentoModule
+    PagamentoModule,
+    PedidoModule
   ],
   controllers: [AppController],
   providers: [AppService,

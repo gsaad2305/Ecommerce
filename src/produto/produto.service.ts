@@ -6,6 +6,7 @@ import {
 import { CreateProdutoDto } from './dto/create-produto.dto.js';
 import { UpdateProdutoDto } from './dto/update-produto.dto.js';
 import { PrismaService } from '../database/prisma.service.js';
+import { addFavorite } from './dto/favorito.dto.js';
 
 @Injectable()
 export class ProdutoService {
@@ -43,8 +44,50 @@ export class ProdutoService {
     return this.create(createProdutoDto, userId);
   }
 
-  async findAll() {
-    const allProdutos = await this.prismaService.produto.findMany();
+  async addFavorite(favorito: addFavorite, userId: string) {
+    const addFavorito = await this.prismaService.favorite.upsert({
+      where: {
+        userId_produtoId: {
+          userId,
+          produtoId: favorito.produtoId,
+        },
+      },
+      update: {
+        favorito: favorito.favorito ?? true,
+      },
+      create: {
+        userId,
+        produtoId: favorito.produtoId,
+        favorito: favorito.favorito ?? true,
+      },
+    });
+
+    return addFavorito;
+  }
+
+  async findAllFavorites(userId: string) {
+    const allProdutos = await this.prismaService.favorite.findMany({
+      where:{
+        userId,
+        favorito: true,
+      }
+  });
+
+    return allProdutos;
+  }
+
+  async findAll(nome?: string) {
+    const allProdutos = await this.prismaService.produto.findMany({
+      where:
+        nome
+          ? {
+            nome: {
+              contains: nome,
+              mode: 'insensitive'
+            },
+            }
+          : {},
+    });
     if (allProdutos.length === 0) {
       throw new NotFoundException('Não há nenhum produto cadastrado');
     }
