@@ -95,10 +95,6 @@ export class ProdutoService {
     return allProdutos;
   }
 
-  async todosProdutos() {
-    return this.findAll();
-  }
-
   async findById(id: string) {
     const produto = await this.prismaService.produto.findUnique({
       where: { id },
@@ -110,10 +106,6 @@ export class ProdutoService {
       );
     }
     return produto;
-  }
-
-  async encontrarProduto(id: string) {
-    return this.findById(id);
   }
 
   async update(
@@ -154,29 +146,17 @@ export class ProdutoService {
     return updateProduto;
   }
 
-  async atualizarProduto(
-    id: string,
-    updateProdutoDto: UpdateProdutoDto,
-    userId: string,
-  ) {
-    return this.update(id, updateProdutoDto, userId);
-  }
-
   async remove(id: string) {
     const produtoExist = await this.prismaService.produto.findUnique({
       where: { id },
     });
     if (!produtoExist) {
       throw new NotFoundException(
-        'Este produto não existe, para ser Atualizado',
+        'Este produto não existe, para ser removido',
       );
     }
     return this.prismaService.produto.delete({
       where: { id: produtoExist.id },
     });
-  }
-
-  async deletarProduto(id: string) {
-    return this.remove(id);
   }
 }

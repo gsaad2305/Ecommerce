@@ -50,7 +50,6 @@ model Produto {
 
   vendedor     Vendedor       @relation(fields: [vendedorId], references: [id])
   favorite     Favorite[]
-  categoria    Categoria[]
   itemCarrinho ItemCarrinho[]
   itensPedido  ItemPedido[]
 }
@@ -69,13 +68,6 @@ model Endereco {
   user User @relation(fields: [userId], references: [id])
 }
 
-model Categoria {
-  id       String    @id @default(uuid())
-  nome     String    @unique
-  produtos Produto[]
-  createAt DateTime  @default(now())
-}
-
 model Favorite {
   id        String   @id @default(uuid())
   userId    String
@@ -88,25 +80,6 @@ model Favorite {
   produto Produto @relation(fields: [produtoId], references: [id])
 
   @@unique([userId, produtoId])
-}
-
-model Entrega {
-  id             String        @id @default(uuid())
-  pedidoId       String        @unique
-  status         STATUSENTREGA
-  codigoRastreio String?
-  dataPrevista   DateTime?
-  dataEntregue   DateTime?
-  cep            String
-  rua            String
-  complemento    String
-  bairro         String
-  cidade         String
-  estado         String
-
-  pedido   Pedido   @relation(fields: [pedidoId], references: [id])
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
 }
 
 model Carrinho {
@@ -138,7 +111,6 @@ model Pedido {
   user      User         @relation(fields: [userId], references: [id])
   items     ItemPedido[]
   pagamento Pagamento?
-  entrega   Entrega?
 
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
@@ -204,14 +176,6 @@ enum STATUSPEDIDO {
   ENVIADO
   ENTREGUE
   CANCELADO
-}
-
-enum STATUSENTREGA {
-  SOLICITADA
-  EM_ANALISE
-  ENVIADA
-  EM_TRANSITO
-  ENTREGUE
 }
 
 enum STATUSDEVOLUCAO {

@@ -263,7 +263,7 @@ export class PagamentoService {
       },
     });
   }
-
+  
   async findById(id: string, userId: string) {
     const pagamento = await this.prismaService.pagamento.findUnique({
       where: { id },
